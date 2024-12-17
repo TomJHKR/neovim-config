@@ -818,9 +818,51 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  -- TODO
+  -- NOTE
+  -- FIXME
+  -- HACK
+  -- BUG
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+    config = function()
+      require('todo-comments').setup {
+        signs = true, -- Show icons in the signs column
+        keywords = {
+          TODO = { icon = ' ', color = 'info' },
+          FIXME = { icon = ' ', color = 'error' },
+          HACK = { icon = ' ', color = 'warning' },
+          NOTE = { icon = ' ', color = 'hint' },
+          BUG = { icon = ' ', color = 'error' },
+        },
+        highlight = {
+          before = '', -- Don't highlight anything before the keyword
+          keyword = 'wide', -- Highlight the keyword (e.g., TODO)
+          after = 'fg', -- Highlight the rest of the comment text
+          pattern = [[.*<(KEYWORDS)>\s*]], -- Regex to match keywords
+          comments_only = true, -- Only highlight in comments
+          max_line_len = 400, -- Ignore long lines
+          exclude = {}, -- File types to exclude
+        },
+        colors = {
+          error = '#ff5c57', -- Color for ERROR comments (match iceberg colors)
+          warning = '#ffb86c', -- Color for WARNING comments
+          info = '#8be9fd', -- Color for INFO comments (light blue)
+          hint = '#50fa7b', -- Color for HINT comments (green)
+          default = '#f1fa8c', -- Default color for comments
+        },
+      }
 
-  { -- Collection of various small independent plugins/module
+      -- If you need to further tweak the highlighting:
+      -- Example: Set a custom highlight for the TODO keyword
+      vim.api.nvim_set_hl(0, 'TodoComment', { fg = '#ff5c57', bg = 'NONE', bold = true }) -- Customize TODO comments
+    end,
+  },
+  {
+    -- Collection of various small independent plugins/module
     'echasnovski/mini.nvim',
     config = function()
       -- Better Around/Inside textobjects
